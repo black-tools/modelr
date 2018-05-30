@@ -1,0 +1,33 @@
+{
+  "name": "modelr",
+  "version": "1.0.0",
+  "description": "A rest API ",
+  "main": "modeler/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "nodemon --exec 'ts-node' test/main.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/black-tools/modelr.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/black-tools/modelr/issues"
+  },
+  "homepage": "https://github.com/black-tools/modelr#readme",
+  "devDependencies": {
+    "concurrently": "^3.5.1",
+    "nodemon": "^1.17.5",
+    "ts-node": "^6.0.5",
+    "typescript": "^2.8.3"
+  },
+  "dependencies": {
+    "@types/node": "^10.1.4",
+    "lodash": "^4.17.10",
+    "pluralize": "^7.0.0"
+  }
+}
