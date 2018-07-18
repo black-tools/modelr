@@ -1,6 +1,6 @@
 {
   "name": "@black-tools/modelr",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "description": "A rest API ",
   "main": "dist/index.js",
   "directories": {
