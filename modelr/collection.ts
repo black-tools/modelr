@@ -1,4 +1,4 @@
-import {RestStore} from "./stores/rest-store";
+import {RestStore} from "./stores/rest-store/rest.store";
 import {IEntityAttributes} from "./entity";
 
 export class Collection<T> extends Array<T> {

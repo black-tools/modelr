@@ -9,6 +9,6 @@
     "target": "es5"
   },
   "files": [
-    "modelr/index.ts"
+    "./anchor/index.ts"
   ]
 }

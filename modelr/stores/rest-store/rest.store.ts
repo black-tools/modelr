@@ -1,18 +1,18 @@
 import axios from "axios";
 import * as pluralize from 'pluralize';
-import {IEntityAttributes} from "../entity";
-import {Mapper} from "../mapper";
+import {Mapper} from "../../mapper";
+import {Store} from "../../";
 
-export class RestStore<T> {
+export class RestStore<T> implements Store<T> {
+
 
     url: string;
     mapper: Mapper<T>;
 
-    constructor(private entityConstructor: {new(...args): T; }) {
+    constructor(private entityConstructor: { new(...args): T; }, poolUrl: string) {
         this.mapper = new Mapper<T>(entityConstructor);
         let name = (<any>entityConstructor).options.name;
-        let remoteUrl = (<any>entityConstructor).options.remoteUrl;
-        this.url = remoteUrl + '/' + pluralize(name);
+        this.url = poolUrl + '/' + pluralize(name);
     }
 
     async find(params) {
@@ -42,10 +42,13 @@ export class RestStore<T> {
             if ((entities as any).id) {
                 res = await axios.put(this.url + '/' + (entities as any).id, entities);
             } else {
-                res = await axios.post(this.url, entities);
+                res = await axios.put(this.url, entities);
             }
             return this.mapper.map(res.data);
         }
     }
 
+    async saveAll(data) {
+        return this.save(data);
+    }
 }

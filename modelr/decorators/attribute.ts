@@ -1,7 +1,10 @@
-
 export function Attr() {
-    return function (param1, key) {
-
-        // console.log(param1, key);
+    return function (target: Object, // The prototype of the class
+                     propertyKey: string | symbol) {
+        let constructor = target.constructor as any;
+        constructor.schema = constructor.schema || {};
+        constructor.schema.attributes = constructor.schema.attributes || {};
+        constructor.schema.attributes[propertyKey] = true;
     }
 }
+
