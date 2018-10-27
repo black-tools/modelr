@@ -9,6 +9,8 @@
     "target": "es5"
   },
   "files": [
-    "modelr/index.ts"
+    "modelr/index.ts",
+    "modelr/stores/rest-store/index.ts",
+    "modelr/stores/sequelize-store/index.ts"
   ]
 }
