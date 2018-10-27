@@ -1,14 +1,17 @@
 import {find, findIndex, cloneDeep} from 'lodash';
 import {Mapper} from "./mapper";
+import {Collection} from "./collection";
 
 
-export const IEntity = <T>() => class implements IEntityAttributes {
-    id: number;
+export const IEntity = <T>() => class extends IEntityAttributes {
 
     static create: (entity: Partial<T>) => T;
-    static find: (id: number | { [param: string]: any }) => Promise<T>; // simplificando. depois isto é para ser td complexo com wheres e tal.
+
+    // simplificando. depois isto é para ser td complexo com wheres e tal.
+    static find: (id: number | { [param: string]: any }, options?: { [param: string]: any }) => Promise<T>;
     static findAll: (params: { [param: string]: any }) => Promise<T[]>;
     static saveAll: (entities: T | T[]) => Promise<T[]>;
+
 
     clone: () => T;
     save: () => Promise<T>;
@@ -18,17 +21,18 @@ export const IEntity = <T>() => class implements IEntityAttributes {
 
 export const Entity = function (options) {
     return <T extends IEntityAttributes>(constructor: any) => {
-
         constructor.options = options;
-        constructor.mapper = new Mapper<T>(constructor);
-        constructor.restStore = options.pool.getStore(constructor);
-
         constructor.schema = {
             ...{
-                attributes: {}
+                attributes: {},
+                associations: {}
             },
             ...(constructor.schema || {}),
         };
+
+        constructor.mapper =  new Mapper<T>(constructor);
+        constructor.store =  options.pool.getStore(constructor);
+
         constructor.schema.attributes.id = Number;
 
 
@@ -36,34 +40,41 @@ export const Entity = function (options) {
             return constructor.mapper.map(entity);
         };
 
-        constructor.find = async function (params) {
-            return await constructor.restStore.find(params);
+        constructor.find = async function (params, options) {
+            return await constructor.store.find(params, options);
         };
 
         constructor.findAll = async function (params) {
-            return await constructor.restStore.findAll(params);
+            return await constructor.store.findAll(params);
         };
 
         constructor.saveAll = async function (entities) {
-            return await constructor.restStore.saveAll(entities);
+            return await constructor.store.saveAll(entities);
+        };
+
+        Object.defineProperty(constructor, 'Collection', {
+            get() {
+                return new Collection(constructor.store);
+            }
+        });
+
+        constructor.prototype.save = async function () {
+            return await constructor.store.save(this);
         };
 
         constructor.prototype.save = async function () {
-            return await constructor.restStore.save(this);
-        };
-
-        constructor.prototype.save = async function () {
-            return await constructor.restStore.save(this);
+            return await constructor.store.save(this);
         };
 
         constructor.prototype.clone = function () {
             return this.mapper.map(this);
         }
 
+
     }
 };
 
-export interface IEntityAttributes {
+export class IEntityAttributes {
     id: number;
 }
 

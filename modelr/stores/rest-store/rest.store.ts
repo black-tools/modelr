@@ -15,7 +15,7 @@ export class RestStore<T> implements Store<T> {
         this.url = poolUrl + '/' + pluralize(name);
     }
 
-    async find(params) {
+    async find(params, options? ) {
         let results = await axios.get(this.url, {
             params: params
         });

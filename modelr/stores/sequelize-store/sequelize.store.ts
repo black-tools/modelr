@@ -3,31 +3,38 @@
 import * as Sequelize from 'sequelize';
 import {Mapper} from "../../mapper";
 import {Store} from "../../interfaces/store";
+import {IEntityAttributes} from "../../entity";
 
 
 export class SequelizeStore<T> implements Store<T> {
 
 
     mapper: Mapper<T>;
-    sqlModel: any;
+    public sqlModel: any;
+    schema: any;
 
     constructor(private entityConstructor: { new(...args): T; }, sequelize: any) {
         this.mapper = new Mapper<T>(entityConstructor);
+        this.schema = (<any>entityConstructor).schema;
 
         let name = (<any>entityConstructor).options.name;
 
 
-        const attrs = (<any>entityConstructor).schema.attributes;
+        // console.log((<any>entityConstructor).schema);
+        const attributes = this.schema.attributes;
 
 
         let sqlSchema = {};
-        console.log(attrs);
 
-        for (let a in attrs) {
-            sqlSchema[a] = this.schemaConversion(attrs[a]);
+        for (let a in attributes) {
+            sqlSchema[a] = this.schemaConversion(attributes[a]);
         }
 
         this.sqlModel = sequelize.define(name, sqlSchema);
+
+
+
+        // console.log('associations -> ', associations);
 
 
         let remoteUrl = (<any>entityConstructor).options.remoteUrl;
@@ -45,9 +52,24 @@ export class SequelizeStore<T> implements Store<T> {
         }
     }
 
+    genIncludes(fields) {
+        const includes = [];
+        for (let key of fields) {
+            if (key in this.schema.associations) {
+                const association = this.schema.associations[key];
+                includes.push({model: association.type.restStore.sqlModel, as: key});
+            }
+        }
+        return includes;
+    }
 
-    async find(params) {
-        return this.sqlModel.findOne({params});
+
+    async find(params, options?) {
+        console.log('includes', options.fields, this.genIncludes((options && options.fields) || {}))
+        return this.sqlModel.findOne({
+            where: params,
+            include: this.genIncludes((options && options.fields) || {})
+        });
         // let results = await axios.get(this.url, {
         //     params: params
         // });
@@ -67,6 +89,8 @@ export class SequelizeStore<T> implements Store<T> {
     }
 
     async save(entities: T | T[]) {
+        console.log('->>>>>', entities)
+        return this.sqlModel.deepUpsert(entities);
 
         // if (entities instanceof Array) {
         //     let res = await axios.put(this.url + '/', entities);
@@ -86,7 +110,17 @@ export class SequelizeStore<T> implements Store<T> {
         return this.sqlModel.deepUpsert(entities);
     }
 
+    associate() {
+        const associations = this.schema.associations;
+        for (let a in associations) {
+            const type = associations[a].type;
+            this.sqlModel.hasMany(type.restStore.sqlModel, {as: a});
+            }
+    }
+
     sync(options) {
+
+
         return this.sqlModel.sync(options);
     }
 
