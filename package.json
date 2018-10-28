@@ -7,7 +7,6 @@
     "test": "test"
   },
   "scripts": {
-    "test": "nodemon --exec 'ts-node' test/client.ts",
     "build": "tsc",
     "serve:server": "nodemon --watch '**/*.ts' --ignore '**/*.spec.ts' --exec 'ts-node' test/server.ts",
     "serve:client": "webpack-dev-server --watch",
