@@ -3,24 +3,27 @@ import {Mapper} from "./mapper";
 import {Collection} from "./collection";
 
 
-export const IEntity = <T>() => class extends IEntityAttributes {
+export function IEntity<T>() {
+    return class {
+        id: number;
 
-    static create: (entity: Partial<T>) => T;
+        public static create: (entity: Partial<T>) => T;
 
-    // simplificando. depois isto é para ser td complexo com wheres e tal.
-    static find: (id: number | { [param: string]: any }, options?: { [param: string]: any }) => Promise<T>;
-    static findAll: (params: { [param: string]: any }) => Promise<T[]>;
-    static saveAll: (entities: T | T[]) => Promise<T[]>;
-
-
-    clone: () => T;
-    save: () => Promise<T>;
-    remove: () => Promise<T>;
-};
+        // simplificando. depois isto é para ser td complexo com wheres e tal.
+        public static find: (id: number | { [param: string]: any }, options?: { [param: string]: any }) => Promise<T>;
+        public static findAll: (params: { [param: string]: any }) => Promise<T[]>;
+        public static saveAll: (entities: T | T[]) => Promise<T[]>;
 
 
-export const Entity = function (options) {
-    return <T extends IEntityAttributes>(constructor: any) => {
+        public clone: () => T;
+        public save: () => Promise<T>;
+        public remove: () => Promise<T>;
+    };
+}
+
+
+export function Entity(options) {
+    return <T extends { IEntity<T>() }>(constructor: any) => {
         constructor.options = options;
         constructor.schema = {
             ...{
@@ -30,8 +33,8 @@ export const Entity = function (options) {
             ...(constructor.schema || {}),
         };
 
-        constructor.mapper =  new Mapper<T>(constructor);
-        constructor.store =  options.pool.getStore(constructor);
+        constructor.mapper = new Mapper<T>(constructor);
+        constructor.store = options.pool.getStore(constructor);
 
         constructor.schema.attributes.id = Number;
 
@@ -69,9 +72,5 @@ export const Entity = function (options) {
 
     }
 };
-
-export class IEntityAttributes {
-    id: number;
-}
 
 

@@ -3,7 +3,6 @@
 import * as Sequelize from 'sequelize';
 import {Mapper} from "../../mapper";
 import {Store} from "../../interfaces/store";
-import {IEntityAttributes} from "../../entity";
 
 
 export class SequelizeStore<T> implements Store<T> {
