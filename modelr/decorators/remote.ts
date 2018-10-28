@@ -21,11 +21,12 @@ const decorator = (applyStatic: boolean) =>
             // console.dir(target);
 
             obj[propertyKey] = (data: any) => {
-                return axios({
+                const ret = axios({
                     method: config.method || 'get',
                     url: config.url,
                     data: data
                 });
+                return ret.data;
 
                 //
                 //     console.log(args);
