@@ -10,10 +10,17 @@ export function IEntity<T>() {
         public static create: (entity: Partial<T>) => T;
 
         // simplificando. depois isto é para ser td complexo com wheres e tal.
-        public static find: (id: number | { [param: string]: any }, options?: { [param: string]: any }) => Promise<T>;
-        public static findAll: (params: { [param: string]: any }) => Promise<T[]>;
-        public static saveAll: (entities: T | T[]) => Promise<T[]>;
+        public static find(id: number | { [param: string]: any }, options?: { [param: string]: any }): Promise<T> {
+            return null;
+        }
 
+        public static findAll(params: { [param: string]: any }): Promise<T[]> {
+            return null;
+        }
+
+        public static saveAll(entities: T | T[]): Promise<T[]> {
+            return null;
+        }
 
         public clone: () => T;
         public save: () => Promise<T>;
