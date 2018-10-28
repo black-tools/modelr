@@ -22,5 +22,8 @@ export class Collection<T> extends Array<T> {
 export function CollectionFactory<T>(classType) {
     return class extends Collection<T> {
         public static __class__ = classType;
+        constructor(public store: Store<T>){
+            super(store);
+        }
     }
 }
