@@ -66,7 +66,7 @@ export class SequelizeStore<T> implements Store<T> {
 
     async find(params, options?) {
         // console.log('includes', options.fields, this.genIncludes((options && options.fields) || {}))
-        const result = this.sqlModel.findOne({
+        const result = await this.sqlModel.findOne({
             where: params,
             include: this.genIncludes((options && options.fields) || {})
         });
@@ -87,7 +87,7 @@ export class SequelizeStore<T> implements Store<T> {
     }
 
     async findAll(params) {
-        const results = this.sqlModel.findAll({params});
+        const results = await this.sqlModel.findAll({params});
         return this.mapper.mapAll(results.data);
 
         // let res = await axios.get(this.url, {
