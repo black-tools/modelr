@@ -62,10 +62,6 @@ export const Entity = function (options) {
             return await constructor.store.save(this);
         };
 
-        constructor.prototype.save = async function () {
-            return await constructor.store.save(this);
-        };
-
         constructor.prototype.clone = function () {
             return this.mapper.map(this);
         }

@@ -65,11 +65,17 @@ export class SequelizeStore<T> implements Store<T> {
 
 
     async find(params, options?) {
-        console.log('includes', options.fields, this.genIncludes((options && options.fields) || {}))
-        return this.sqlModel.findOne({
+        // console.log('includes', options.fields, this.genIncludes((options && options.fields) || {}))
+        const result = this.sqlModel.findOne({
             where: params,
             include: this.genIncludes((options && options.fields) || {})
         });
+
+        if (result) {
+            return this.mapper.map(result);
+        } else {
+            return null;
+        }
         // let results = await axios.get(this.url, {
         //     params: params
         // });
@@ -81,7 +87,9 @@ export class SequelizeStore<T> implements Store<T> {
     }
 
     async findAll(params) {
-        return this.sqlModel.findAll({params});
+        const results = this.sqlModel.findAll({params});
+        return this.mapper.mapAll(results.data);
+
         // let res = await axios.get(this.url, {
         //     params: params
         // });
@@ -89,7 +97,7 @@ export class SequelizeStore<T> implements Store<T> {
     }
 
     async save(entities: T | T[]) {
-        console.log('->>>>>', entities)
+        // console.log('->>>>>', entities)
         return this.sqlModel.deepUpsert(entities);
 
         // if (entities instanceof Array) {
