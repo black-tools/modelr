@@ -20,8 +20,8 @@ const decorator = (applyStatic: boolean) =>
             // console.dir(target.constructor, propertyKey);
             // console.dir(target);
 
-            obj[propertyKey] = (data: any) => {
-                const ret = axios({
+            obj[propertyKey] = async (data: any) => {
+                const ret = await axios({
                     method: config.method || 'get',
                     url: config.url,
                     data: data
