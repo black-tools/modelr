@@ -33,7 +33,6 @@ export class SequelizeStore<T> implements Store<T> {
         this.sqlModel = sequelize.define(name, sqlSchema);
 
 
-
         // console.log('associations -> ', associations);
 
 
@@ -72,7 +71,7 @@ export class SequelizeStore<T> implements Store<T> {
         });
 
         if (result) {
-            return this.mapper.map(result);
+            return this.mapper.map(result.get({plain: true}));
         } else {
             return null;
         }
@@ -88,7 +87,7 @@ export class SequelizeStore<T> implements Store<T> {
 
     async findAll(params) {
         const results = await this.sqlModel.findAll({params});
-        return this.mapper.mapAll(results.data);
+        return this.mapper.mapAll(results.map(r => r.get({plain: true})));
 
         // let res = await axios.get(this.url, {
         //     params: params
@@ -123,7 +122,7 @@ export class SequelizeStore<T> implements Store<T> {
         for (let a in associations) {
             const type = associations[a].type;
             this.sqlModel.hasMany(type.restStore.sqlModel, {as: a});
-            }
+        }
     }
 
     sync(options) {
