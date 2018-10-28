@@ -7,7 +7,9 @@ export function IEntity<T>() {
     return class {
         id: number;
 
-        public static create: (entity: Partial<T>) => T;
+        public static create(entity: Partial<T>): T {
+            return null;
+        };
 
         // simplificando. depois isto é para ser td complexo com wheres e tal.
         public static find(id: number | { [param: string]: any }, options?: { [param: string]: any }): Promise<T> {
