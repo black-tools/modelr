@@ -1,6 +1,6 @@
 {
   "name": "@black-tools/modelr",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "An extensible proxy to access and manipulate models.",
   "main": "dist/index.js",
   "directories": {
