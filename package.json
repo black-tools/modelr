@@ -12,7 +12,7 @@
     "serve:client": "webpack-dev-server --watch",
     "serve:api": "json-server test/db.json",
     "serve": "concurrently \"npm run serve:client\" \"npm run serve:server\" ",
-    "publish": "npm run build && npm version patch && npm publish"
+    "upload": "npm run build && npm version patch && npm publish"
   },
   "repository": {
     "type": "git",
