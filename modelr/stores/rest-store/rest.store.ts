@@ -19,8 +19,8 @@ export class RestStore<T> implements Store<T> {
         let results = await axios.get(this.url, {
             params: params
         });
-        if (results.data.length > 0) {
-            return this.mapper.map(results.data[0]);
+        if (results.data) {
+            return this.mapper.map(results.data);
         } else {
             return null;
         }
