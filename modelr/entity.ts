@@ -33,6 +33,8 @@ export function IEntity<T>() {
 
 export function Entity(options) {
     return <T extends { IEntity<T>() }>(constructor: any) => {
+        constructor.__is__entity__ = true;
+
         constructor.options = options;
         constructor.schema = {
             ...{
@@ -56,8 +58,8 @@ export function Entity(options) {
             return await constructor.store.find(params, options);
         };
 
-        constructor.findAll = async function (params) {
-            return await constructor.store.findAll(params);
+        constructor.findAll = async function (params, options) {
+            return await constructor.store.findAll(params, options);
         };
 
         constructor.saveAll = async function (entities) {

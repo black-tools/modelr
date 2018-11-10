@@ -5,7 +5,6 @@ import {Store} from "../../";
 
 export class RestStore<T> implements Store<T> {
 
-
     url: string;
     mapper: Mapper<T>;
 
@@ -15,9 +14,10 @@ export class RestStore<T> implements Store<T> {
         this.url = poolUrl + '/' + pluralize(name);
     }
 
-    async find(params, options? ) {
-        let results = await axios.get(this.url, {
-            params: params
+    async find(params, options?) {
+        const {id = '', ...query} = {...params};
+        let results = await axios.get(this.url + ('/' + id), {
+            params: query
         });
         if (results.data) {
             return this.mapper.map(results.data);
