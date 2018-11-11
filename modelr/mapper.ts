@@ -9,15 +9,20 @@ export class Mapper<T> {
     }
 
     map(rawEntity: Partial<T>) {
-        // let object = Object.create(this.entityConstructor);
+
         let schema = (<any>this.entityConstructor).schema;
         let applicableRawEntity: any = {};
         for (let key in rawEntity) {
+            const rawValue = rawEntity[key];
             if (schema.attributes.hasOwnProperty(key)) {
-                if (schema.attributes[key].association) {
-
+                applicableRawEntity[key] = rawValue;
+            } else if (schema.associations.hasOwnProperty(key)) {
+                const association = schema.associations[key];
+                const mapper = association.type.mapper;
+                if (association.multiple) {
+                    applicableRawEntity[key] = mapper.mapAll(rawValue);
                 } else {
-                    applicableRawEntity[key] = rawEntity[key];
+                    applicableRawEntity[key] = mapper.map(rawValue);
                 }
             }
         }

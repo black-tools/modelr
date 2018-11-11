@@ -21,6 +21,7 @@ export function Attr() {
         } else if (returnType.__is__entity__) {
             constructor.schema.associations[propertyKey] = {
                 type: returnType,
+                multiple: false,
                 belongsTo: true
             };
         } else {
