@@ -125,8 +125,6 @@ export class SequelizeStore<T> implements Store<T> {
             if(associations[a].multiple){
                 this.sqlModel.hasMany(type.store.sqlModel, {as: a});
             }else {
-                console.log('type', type);
-                console.log('restStore', type.store);
                 this.sqlModel.belongsTo(type.store.sqlModel, {as: a});
             }
         }

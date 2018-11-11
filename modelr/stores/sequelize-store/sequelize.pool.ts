@@ -13,8 +13,8 @@ export class SequelizePool implements Pool {
         this.sqlConnection = new Sequelize(database, username, password, otherOptions);
         extendSequelize(this.sqlConnection);
     }
-    sync(options) {
-        return Promise.all(this.stores.map(s => s.sync(options)));
+    sync(options, stores) {
+        return Promise.all((stores || this.stores).map(s => s.sync(options)));
     }
 
     associate() {
