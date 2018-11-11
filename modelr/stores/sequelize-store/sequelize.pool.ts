@@ -13,8 +13,12 @@ export class SequelizePool implements Pool {
         this.sqlConnection = new Sequelize(database, username, password, otherOptions);
         extendSequelize(this.sqlConnection);
     }
-    sync(options, stores) {
-        return Promise.all((stores || this.stores).map(s => s.sync(options)));
+
+    async sync(options, stores) {
+        return (stores || this.stores).reduce(async (ret, store) => {
+            await ret;
+            return store.sync(options);
+        }, Promise.resolve())
     }
 
     associate() {
@@ -27,7 +31,7 @@ export class SequelizePool implements Pool {
         return store;
     }
 
-    get sqlModels(){
+    get sqlModels() {
         return this.stores.map(s => s.sqlModel);
     }
 
