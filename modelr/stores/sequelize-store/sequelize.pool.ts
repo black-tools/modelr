@@ -13,7 +13,6 @@ export class SequelizePool implements Pool {
         this.sqlConnection = new Sequelize(database, username, password, otherOptions);
         extendSequelize(this.sqlConnection);
     }
-
     sync(options) {
         return Promise.all(this.stores.map(s => s.sync(options)));
     }
@@ -21,7 +20,6 @@ export class SequelizePool implements Pool {
     associate() {
         this.stores.forEach(s => s.associate());
     }
-
 
     getStore<T>(entityConstructor: { new(...args): T; }): Store<T> {
         const store = new SequelizeStore<T>(entityConstructor, this.sqlConnection);

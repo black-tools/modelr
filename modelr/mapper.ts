@@ -3,11 +3,9 @@
  * We need to do mapping recursively to instantiate attributes/associations and stuff.
  */
 export class Mapper<T> {
-
     constructor(private entityConstructor: { new(...args): T; }) {
 
     }
-
     map(rawEntity: Partial<T>) {
 
         let schema = (<any>this.entityConstructor).schema;

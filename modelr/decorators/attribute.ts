@@ -9,8 +9,8 @@ export function Attr() {
         constructor.schema.attributes = constructor.schema.attributes || {};
         constructor.schema.associations = constructor.schema.associations || {};
 
-
         const returnType = Reflect.getMetadata("design:type", target, propertyKey);
+        console.log('return type', returnType);
 
         if (Collection.isPrototypeOf(returnType)) {
             const elReturnType = returnType.__class__;
