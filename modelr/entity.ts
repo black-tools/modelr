@@ -1,6 +1,6 @@
 import {find, findIndex, cloneDeep} from 'lodash';
 import {Mapper} from "./mapper";
-import {Collection} from "./collection";
+// import {Collection} from "./collection";
 
 
 export function IEntity<T>() {
@@ -66,11 +66,11 @@ export function Entity(options) {
             return await constructor.store.saveAll(entities);
         };
 
-        Object.defineProperty(constructor, 'Collection', {
-            get() {
-                return new Collection(constructor.store);
-            }
-        });
+        // Object.defineProperty(constructor, 'Collection', {
+        //     get() {
+        //         return new Collection(constructor.store);
+        //     }
+        // });
 
         constructor.prototype.save = async function () {
             return await constructor.store.save(this);
