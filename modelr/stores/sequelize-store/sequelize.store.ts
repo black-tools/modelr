@@ -55,7 +55,7 @@ export class SequelizeStore<T> implements Store<T> {
         for (let key of fields) {
             if (key in this.schema.associations) {
                 const association = this.schema.associations[key];
-                includes.push({model: association.type.restStore.sqlModel, as: key});
+                includes.push({model: association.type.store.sqlModel, as: key});
             }
         }
         return includes;
