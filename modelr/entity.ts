@@ -1,29 +1,31 @@
 import {Mapper} from "./mapper";
 
-export class IEntity<T> {
-    public id: number = undefined;
+export function IEntity<T>() {
+    return class {
+        public id: number = undefined;
 
-    public static create<T extends IEntity<any>>(entity: Partial<T>): T {
-        return null;
+        public static create<T>(entity: Partial<T>): T {
+            return null;
+        };
+
+        // simplificando. depois isto é para ser td complexo com wheres e tal.
+        public static find<T>(id: number | { [param: string]: any }, options?: { [param: string]: any }): Promise<T> {
+            return null;
+        }
+
+        public static findAll<T>(params: { [param: string]: any }): Promise<T[]> {
+            return null;
+        }
+
+        public static saveAll<T>(entities: T | T[]): Promise<T[]> {
+            return null;
+        }
+
+        public clone: () => T;
+        public save: () => Promise<T>;
+        public remove: () => Promise<T>;
     };
-
-    // simplificando. depois isto é para ser td complexo com wheres e tal.
-    public static find<T extends IEntity<any>>(id: number | { [param: string]: any }, options?: { [param: string]: any }): Promise<T> {
-        return null;
-    }
-
-    public static findAll<T extends IEntity<any>>(params: { [param: string]: any }): Promise<T[]> {
-        return null;
-    }
-
-    public static saveAll<T extends IEntity<any>>(entities: T | T[]): Promise<T[]> {
-        return null;
-    }
-
-    public clone: () => T;
-    public save: () => Promise<T>;
-    public remove: () => Promise<T>;
-};
+}
 
 
 export function Entity(options) {
