@@ -5,7 +5,7 @@ import {Mapper} from "./mapper";
 
 
 class IEntity<T> {
-    public id: number;
+    public id: number = undefined;
 
     public static create<T extends IEntity<any>>(entity: Partial<T>): T {
         return null;
