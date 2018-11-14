@@ -4,7 +4,7 @@ import {Mapper} from "./mapper";
 // import {Collection} from "./collection";
 
 
-class IEntity<T> {
+export class IEntity<T> {
     public id: number = undefined;
 
     public static create<T extends IEntity<any>>(entity: Partial<T>): T {
