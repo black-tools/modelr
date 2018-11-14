@@ -1,5 +1,6 @@
 import {find, findIndex, cloneDeep} from 'lodash';
 import {Mapper} from "./mapper";
+
 // import {Collection} from "./collection";
 
 
@@ -32,56 +33,46 @@ export function IEntity<T>() {
 
 
 export function Entity(options) {
-    return <T extends { IEntity<T>() }>(constructor: any) => {
-        constructor.__is__entity__ = true;
+    return <T extends { new(...args: any[]): {} }>(constructor: T) => {
+        return class EntityClass extends constructor {
+            static __is__entity__ = true;
+            static options = options;
+            static schema = {
+                ...{
+                    attributes: {},
+                    associations: {}
+                },
+                ...((constructor as any).schema || {}),
+            };
+            static mapper = new Mapper<T>(constructor as any);
+            static store = options.pool.getStore(constructor);
 
-        constructor.options = options;
-        constructor.schema = {
-            ...{
-                attributes: {},
-                associations: {}
-            },
-            ...(constructor.schema || {}),
+
+            static create(entity) {
+                return EntityClass.mapper.map(entity);
+            };
+
+            static async find(params, options) {
+                return await EntityClass.store.find(params, options);
+            };
+
+            static async findAll(params, options) {
+                return await EntityClass.store.findAll(params, options);
+            };
+
+            static async saveAll(entities) {
+                return await EntityClass.store.saveAll(entities);
+            };
+
+            async save() {
+                return await EntityClass.store.save(this);
+            };
+
+            clone() {
+                return EntityClass.mapper.map(this as any);
+            }
         };
-
-        constructor.mapper = new Mapper<T>(constructor);
-        constructor.store = options.pool.getStore(constructor);
-
-        constructor.schema.attributes.id = Number;
-
-
-        constructor.create = function (entity) {
-            return constructor.mapper.map(entity);
-        };
-
-        constructor.find = async function (params, options) {
-            return await constructor.store.find(params, options);
-        };
-
-        constructor.findAll = async function (params, options) {
-            return await constructor.store.findAll(params, options);
-        };
-
-        constructor.saveAll = async function (entities) {
-            return await constructor.store.saveAll(entities);
-        };
-
-        // Object.defineProperty(constructor, 'Collection', {
-        //     get() {
-        //         return new Collection(constructor.store);
-        //     }
-        // });
-
-        constructor.prototype.save = async function () {
-            return await constructor.store.save(this);
-        };
-
-        constructor.prototype.clone = function () {
-            return this.mapper.map(this);
-        }
-
-
     }
-};
+}
 
 
