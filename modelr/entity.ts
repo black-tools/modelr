@@ -4,20 +4,20 @@ export function IEntity<T>() {
     return class {
         public id: number = undefined;
 
-        public static create<T>(entity: Partial<T>): T {
+        public static create(entity: Partial<T>): T {
             return null;
         };
 
         // simplificando. depois isto é para ser td complexo com wheres e tal.
-        public static find<T>(id: number | { [param: string]: any }, options?: { [param: string]: any }): Promise<T> {
+        public static find(id: number | { [param: string]: any }, options?: { [param: string]: any }): Promise<T> {
             return null;
         }
 
-        public static findAll<T>(params: { [param: string]: any }): Promise<T[]> {
+        public static findAll(params: { [param: string]: any }): Promise<T[]> {
             return null;
         }
 
-        public static saveAll<T>(entities: T | T[]): Promise<T[]> {
+        public static saveAll(entities: T | T[]): Promise<T[]> {
             return null;
         }
 
@@ -29,7 +29,7 @@ export function IEntity<T>() {
 
 
 export function Entity(options) {
-    return <T extends { new(...args: any[]): { IEntity<T>() } }>(constructor: T) => {
+    return <T extends { new(...args: any[]): {} }>(constructor: T) => {
         return class EntityClass extends constructor {
             static __is__entity__ = true;
             static options = options;
