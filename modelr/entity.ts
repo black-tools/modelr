@@ -1,8 +1,4 @@
-import {find, findIndex, cloneDeep} from 'lodash';
 import {Mapper} from "./mapper";
-
-// import {Collection} from "./collection";
-
 
 export class IEntity<T> {
     public id: number = undefined;
