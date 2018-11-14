@@ -29,7 +29,7 @@ export function IEntity<T>() {
 
 
 export function Entity(options) {
-    return <T extends { new(...args: any[]): {} }>(constructor: T) => {
+    return <T extends { new(...args: any[]): { Entity<T>() } }>(constructor: T) => {
         return class EntityClass extends constructor {
             static __is__entity__ = true;
             static options = options;
