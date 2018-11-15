@@ -8,7 +8,6 @@ export function IEntity<T>() {
             return null;
         };
 
-        // simplificando. depois isto é para ser td complexo com wheres e tal.
         public static find(id: number | { [param: string]: any }, options?: { [param: string]: any }): Promise<T> {
             return null;
         }
@@ -29,45 +28,48 @@ export function IEntity<T>() {
 
 
 export function Entity(options) {
-    return <T extends { new(...args: any[]): { } }>(constructor: T) => {
-        return class EntityClass extends constructor {
-            static __is__entity__ = true;
-            static options = options;
-            static schema = {
-                ...{
-                    attributes: {},
-                    associations: {}
-                },
-                ...((constructor as any).schema || {}),
-            };
-            static mapper = new Mapper<T>(constructor as any);
-            static store = options.pool.getStore(constructor);
+    return <T extends { new(...args: any[]): {} }>(constructor: any) => {
 
-
-            static create(entity) {
-                return EntityClass.mapper.map(entity);
-            };
-
-            static async find(params, options) {
-                return await EntityClass.store.find(params, options);
-            };
-
-            static async findAll(params, options) {
-                return await EntityClass.store.findAll(params, options);
-            };
-
-            static async saveAll(entities) {
-                return await EntityClass.store.saveAll(entities);
-            };
-
-            async save() {
-                return await EntityClass.store.save(this);
-            };
-
-            clone() {
-                return EntityClass.mapper.map(this as any);
-            }
+        constructor.options = options;
+        constructor.schema = {
+            ...{
+                attributes: {},
+                associations: {}
+            },
+            ...(constructor.schema || {}),
         };
+
+        constructor.mapper = new Mapper<T>(constructor);
+        constructor.store = options.pool.getStore(constructor);
+
+        constructor.schema.attributes.id = Number;
+
+
+        constructor.create = function (entity) {
+            return constructor.mapper.map(entity);
+        };
+
+        constructor.find = async function (params, options) {
+            return await constructor.store.find(params, options);
+        };
+
+        constructor.findAll = async function (params) {
+            return await constructor.store.findAll(params);
+        };
+
+        constructor.saveAll = async function (entities) {
+            return await constructor.store.saveAll(entities);
+        };
+
+        constructor.prototype.save = async function () {
+            return await constructor.store.save(this);
+        };
+
+        constructor.prototype.clone = function () {
+            return this.mapper.map(this);
+        };
+
+        return constructor;
     }
 }
 
