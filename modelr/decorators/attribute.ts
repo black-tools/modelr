@@ -35,10 +35,10 @@ export function Attr(options?: AttrOptions) {
     }
 }
 
-export function AttrI(options?: AttrOptions) {
+export function AttI(options?: AttrOptions) {
     return Attr({...options, ...{type: 'integer'}});
 }
 
-export function AttrF(options?: AttrOptions) {
+export function AttF(options?: AttrOptions) {
     return Attr({...options, ...{type: 'float'}});
 }
