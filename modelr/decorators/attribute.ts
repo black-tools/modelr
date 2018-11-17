@@ -1,7 +1,11 @@
 import 'reflect-metadata';
 import {Collection} from "../collection";
 
-export function Attr() {
+export interface AttrOptions {
+    type?: string;
+}
+
+export function Attr(options: AttrOptions) {
     return function (target: Object, // The prototype of the class
                      propertyKey: string | symbol) {
         let constructor = target.constructor as any;
@@ -24,7 +28,8 @@ export function Attr() {
             };
         } else {
             constructor.schema.attributes[propertyKey] = {
-                type: returnType
+                type: returnType,
+                typeDomain: options && options.type
             };
         }
     }

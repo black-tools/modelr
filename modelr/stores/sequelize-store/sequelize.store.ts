@@ -31,20 +31,18 @@ export class SequelizeStore<T> implements Store<T> {
 
         this.sqlModel = sequelize.define(name, sqlSchema);
 
-
-        // console.log('associations -> ', associations);
-
-
-        let remoteUrl = (<any>entityConstructor).options.remoteUrl;
-        // this.url = remoteUrl + '/' + pluralize(name);
+        // let remoteUrl = (<any>entityConstructor).options.remoteUrl;
     }
 
 
     private schemaConversion(attribute: any) {
-
-        let sqlType = attribute.type instanceof String ? Sequelize.STRING : Sequelize.TEXT;
-
-        // console.log(attribute);
+        let sqlType = Sequelize.TEXT;
+        if (attribute.type instanceof String) {
+            sqlType = Sequelize.STRING;
+        } else if (attribute.type instanceof Number) {
+            const numericType = attribute.typeDomain || 'double';
+            sqlType = Sequelize[numericType.toLocaleUpperCase()];
+        }
         return {
             type: sqlType
         }
@@ -122,9 +120,9 @@ export class SequelizeStore<T> implements Store<T> {
         const associations = this.schema.associations;
         for (let a in associations) {
             const type = associations[a].type;
-            if(associations[a].multiple){
+            if (associations[a].multiple) {
                 this.sqlModel.hasMany(type.store.sqlModel, {as: a});
-            }else {
+            } else {
                 this.sqlModel.belongsTo(type.store.sqlModel, {as: a});
             }
         }
