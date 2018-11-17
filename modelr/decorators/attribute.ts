@@ -5,7 +5,7 @@ export interface AttrOptions {
     type?: string;
 }
 
-export function Attr(options: AttrOptions) {
+export function Attr(options?: AttrOptions) {
     return function (target: Object, // The prototype of the class
                      propertyKey: string | symbol) {
         let constructor = target.constructor as any;
@@ -35,3 +35,10 @@ export function Attr(options: AttrOptions) {
     }
 }
 
+export function AttrI(options?: AttrOptions) {
+    return Attr({...options, ...{type: 'integer'}});
+}
+
+export function AttrF(options?: AttrOptions) {
+    return Attr({...options, ...{type: 'float'}});
+}
