@@ -36,13 +36,15 @@ export class SequelizeStore<T> implements Store<T> {
 
 
     private schemaConversion(attribute: any) {
-        let sqlType = Sequelize.TEXT;
-        if (attribute.type instanceof String) {
-            sqlType = Sequelize.STRING;
-        } else if (attribute.type instanceof Number) {
+        let sqlType;
+        if (attribute.type === String) {
+            const numericType = attribute.typeDomain || 'text';
+            sqlType = Sequelize[numericType.toLocaleUpperCase()];
+        } else if (attribute.type === Number) {
             const numericType = attribute.typeDomain || 'double';
             sqlType = Sequelize[numericType.toLocaleUpperCase()];
         }
+
         return {
             type: sqlType
         }

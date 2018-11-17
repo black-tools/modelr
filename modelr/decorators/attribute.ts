@@ -42,3 +42,7 @@ export function AttI(options?: AttrOptions) {
 export function AttF(options?: AttrOptions) {
     return Attr({...options, ...{type: 'float'}});
 }
+
+export function AttS(options?: AttrOptions) {
+    return Attr({...options, ...{type: 'string'}});
+}
