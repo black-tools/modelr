@@ -12,7 +12,7 @@ export function IEntity<T>() {
             return null;
         }
 
-        public static findAll(params: { [param: string]: any }): Promise<T[]> {
+        public static findAll(params: { [param: string]: any }, options?: { [param: string]: any }): Promise<T[]> {
             return null;
         }
 
@@ -53,8 +53,8 @@ export function Entity(options) {
             return await constructor.store.find(params, options);
         };
 
-        constructor.findAll = async function (params) {
-            return await constructor.store.findAll(params);
+        constructor.findAll = async function (params, options) {
+            return await constructor.store.findAll(params, options);
         };
 
         constructor.saveAll = async function (entities) {
