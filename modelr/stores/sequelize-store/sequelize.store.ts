@@ -40,6 +40,8 @@ export class SequelizeStore<T> implements Store<T> {
         if (attribute.type === String) {
             const numericType = attribute.typeDomain || 'text';
             sqlType = Sequelize[numericType.toLocaleUpperCase()];
+        } else if (attribute.type === Date) {
+            sqlType = Sequelize.DATE;
         } else if (attribute.type === Number) {
             const numericType = attribute.typeDomain || 'double';
             sqlType = Sequelize[numericType.toLocaleUpperCase()];
