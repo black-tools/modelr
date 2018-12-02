@@ -1,8 +1,8 @@
 import 'reflect-metadata';
-import {Collection} from "../collection";
 
 export interface AttrOptions {
     type?: string;
+    through?: string;
 }
 
 export function Attr(options?: AttrOptions) {
@@ -14,11 +14,12 @@ export function Attr(options?: AttrOptions) {
         constructor.schema.associations = constructor.schema.associations || {};
 
         const returnType = Reflect.getMetadata("design:type", target, propertyKey);
-        if (Collection.isPrototypeOf(returnType)) {
+        if (returnType.__is_collection__) {
             const elReturnType = returnType.__class__;
             constructor.schema.associations[propertyKey] = {
                 type: elReturnType,
-                multiple: true
+                multiple: true,
+                through: options && options.through
             };
         } else if (returnType.__is__entity__) {
             constructor.schema.associations[propertyKey] = {

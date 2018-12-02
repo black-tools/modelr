@@ -57,7 +57,7 @@ export class SequelizeStore<T> implements Store<T> {
         for (let key of fields) {
             if (key in this.schema.associations) {
                 const association = this.schema.associations[key];
-                includes.push({model: association.type.store.sqlModel, as: key});
+                includes.push({model: association.type.store.sqlModel, as: key, through: association.through});
             }
         }
         return includes;
@@ -124,7 +124,9 @@ export class SequelizeStore<T> implements Store<T> {
         const associations = this.schema.associations;
         for (let a in associations) {
             const type = associations[a].type;
-            if (associations[a].multiple) {
+            if (associations[a].multiple && associations[a].through) {
+                this.sqlModel.belongsToMany(type.store.sqlModel, {as: a, through: associations[a].through});
+            } else if(associations[a].multiple) {
                 this.sqlModel.hasMany(type.store.sqlModel, {as: a});
             } else {
                 this.sqlModel.belongsTo(type.store.sqlModel, {as: a});

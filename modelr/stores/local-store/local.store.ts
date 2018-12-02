@@ -2,9 +2,9 @@ import {Mapper} from "../../mapper";
 import {Store} from "../../";
 
 
-function satisfies(elem, iter){
-    for(const key in iter){
-        if(elem[key] !== iter[key]){
+function satisfies(elem, iter) {
+    for (const key in iter) {
+        if (elem[key] !== iter[key]) {
             return false;
         }
     }
@@ -28,11 +28,11 @@ export class LocalStore<T> implements Store<T> {
             const data = [];
             const tx = this.db.transaction(this.name, "readonly");
             const index = tx.objectStore(this.name)
-            index.openCursor().onsuccess = function (event) {
+            index.openCursor().onsuccess = (event) => {
                 const cursor = event.target.result;
                 if (cursor) {
                     const elem = cursor.value;
-                    if(satisfies(elem, params)){
+                    if (satisfies(elem, params)) {
                         data.push(cursor.value);
                     }
                     cursor.continue();
@@ -42,9 +42,6 @@ export class LocalStore<T> implements Store<T> {
             }
         })
     }
-
-
-
 
 
     async find(params, options?) {

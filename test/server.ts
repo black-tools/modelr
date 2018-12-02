@@ -1,6 +1,5 @@
 import {SequelizePool} from "../modelr/stores/sequelize-store";
-import {Entity, Attr, IEntity, CollectionFactory} from "../modelr";
-import {RestStore} from "../modelr/stores/rest-store";
+import {Entity, Attr, IEntity, Collection} from "../modelr";
 
 import {App, NcModule, Controller, Route} from "@black-tools/anchor";
 import {Angler, DropMode} from "@black-tools/angler";
@@ -21,8 +20,7 @@ export class Bar extends IEntity<Bar>() {
 
 }
 
-// export class BarCollection extends CollectionFactory<Bar>(Bar) {
-// }
+export class BarCollection extends Collection<Bar>(Bar) {}
 
 
 @Entity({
@@ -33,8 +31,8 @@ export class Foo extends IEntity<Foo>() {
 
     @Attr() name: string;
     @Attr() temperature: 'cold' | 'warm' | 'hot';
-    // @Attr() bars: BarCollection;
-    //
+    @Attr({through: 'users_bars'}) bars: BarCollection;
+
     shoutName() {
         return this.name.toUpperCase() + ' !';
     }
@@ -72,25 +70,26 @@ export class FooController {
         method: 'put'
     })
     async save(params, data) {
-        try{
-            const x= await Foo.saveAll(data); //todo should be save
+        try {
+            const x = await Foo.saveAll(data); //todo should be save
             console.log(x);
             return x;
-        }catch(err){
+        } catch (err) {
             console.log('err', err);
             return err;
         }
     }
+
     @Route({
         path: '/:id',
         method: 'put'
     })
     async update(params, data) {
-        try{
-           const x= await Foo.saveAll(data); //todo should be save
-           console.log(x);
+        try {
+            const x = await Foo.saveAll(data); //todo should be save
+            console.log(x);
             return x;
-        }catch(err){
+        } catch (err) {
             console.log('err', err);
             return err;
 
@@ -107,6 +106,8 @@ export class FooController {
         return foo.remove();
     }
 }
+
+
 
 @NcModule({
     middlewares: [
@@ -128,11 +129,10 @@ async function init() {
     const angler = new Angler(sqlPool.sqlConnection, sqlPool.sqlModels);
     await angler.sync({drop: DropMode.ALL});
 
-
     console.log('--- end sync');
-
 
     App.bootstrap({port: 3000}, AppModule);
 }
+
 
 init();

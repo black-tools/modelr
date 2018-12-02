@@ -1,4 +1,4 @@
-import {IEntity, Attr, Entity, RemoteResult, SRemote, Collection, CollectionFactory, Store} from "../../modelr";
+import {IEntity, Attr, Entity, RemoteResult, SRemote, Store} from "../../modelr";
 import {RestPool, RestStore} from "../../modelr/stores/rest-store";
 
 const pool = new RestPool('http://localhost:3000');

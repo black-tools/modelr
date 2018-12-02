@@ -1,5 +1,5 @@
 export * from './entity'
-// export * from './collection'
+export * from './collection'
 export * from './decorators/attribute'
 export * from './decorators/remote'
 export * from './interfaces/store'
