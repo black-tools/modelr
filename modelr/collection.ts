@@ -1,9 +1,10 @@
 export function Collection<T>(classType) {
-    return class {
+    return class extends Array<T> {
         public static readonly __is_collection__ = true;
         public static readonly __class__ = classType;
 
-        constructor(public store) {
+        constructor(public store, ...args: any[]) {
+            super(...args);
         }
 
         saveAll() {
