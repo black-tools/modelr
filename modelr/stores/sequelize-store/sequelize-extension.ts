@@ -1,13 +1,13 @@
 export function extendSequelize(sequelize) {
 
 
-    sequelize.Model.hasPrimaryKeyAttrs = (obj) => {
+    sequelize.Model.hasPrimaryKeyAttrs = function (obj) {
         let pks = this.primaryKeyAttributes;
         return pks.some((pk) => obj.hasOwnProperty(pk) && obj[pk]);
     };
 
 
-    sequelize.Model.filterPrimaryKeys = (object) => {
+    sequelize.Model.filterPrimaryKeys = function (object) {
         let primaryKeys = this.primaryKeyAttributes;
         let conditions = {};
         for (let key of primaryKeys) {
@@ -19,7 +19,7 @@ export function extendSequelize(sequelize) {
     };
 
 
-    sequelize.Model.filterAttributes = (object) => {
+    sequelize.Model.filterAttributes = function (object) {
         let attributes = this.rawAttributes as { [key: string]: any }[];
         let filteredObject = {};
         for (let [key, attr] of Object.entries(attributes)) {
@@ -30,7 +30,7 @@ export function extendSequelize(sequelize) {
         return filteredObject;
     };
 
-    sequelize.Model.filterAssociations = (object) => {
+    sequelize.Model.filterAssociations = function (object) {
         let associations = this.associations;
         let filteredObject = [];
         for (let [key, association] of Object.entries(associations)) {
@@ -44,7 +44,7 @@ export function extendSequelize(sequelize) {
         return filteredObject;
     };
 
-    sequelize.Model.bulkUpsert = async (objects) => {
+    sequelize.Model.bulkUpsert = async function (objects) {
         let multiple = Array.isArray(objects);
         objects = multiple ? objects : new Array(objects);
 
@@ -82,10 +82,10 @@ export function extendSequelize(sequelize) {
 
     };
 
-    sequelize.Model.deepUpsert = async (objects) => {
+    sequelize.Model.deepUpsert = async function (objects) {
         let multiple = Array.isArray(objects);
         objects = multiple ? objects : new Array(objects);
-        console.log(this);
+        // console.log(this);
         let entities = await Promise.all(objects.map(async (object) => {
             const entity = await this.bulkUpsert(this.filterAttributes(object));
 
