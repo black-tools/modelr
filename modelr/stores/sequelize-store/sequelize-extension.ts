@@ -30,7 +30,7 @@ export function extendSequelize(sequelize) {
         return filteredObject;
     };
 
-    sequelize.Model.filterAssociations = function (object) {
+    sequelize.Model.filterAssociations = (object) => {
         let associations = this.associations;
         let filteredObject = [];
         for (let [key, association] of Object.entries(associations)) {
@@ -44,24 +44,29 @@ export function extendSequelize(sequelize) {
         return filteredObject;
     };
 
-    sequelize.Model.bulkUpsert = function (objects) {
+    sequelize.Model.bulkUpsert = async (objects) => {
         let multiple = Array.isArray(objects);
         objects = multiple ? objects : new Array(objects);
 
-        return Promise.all(objects.map((object) => {
+        let entities = await Promise.all(objects.map(async (object) => {
             if (this.hasPrimaryKeyAttrs(object)) {
                 let pks = this.filterPrimaryKeys(object);
                 if (object.deleted_at) {
-                    return this.findOne({where: pks})
-                        .then((entity) => {
-                            return entity.destroy()
-                                .then((ret) => {
-                                    return null;
-                                })
-                        })
+                    const obj = await this.findOne({where: pks});
+                    if (obj) {
+                        obj.destroy()
+                    }
+                    return null;
                 } else {
-                    return this.findOne({where: pks})
-                        .then(entity => entity.updateAttributes(object))
+                    return this.update(object, {
+                        where: pks,
+                        returning: true
+                    });
+                    // const updatedObj = await this.findOne({where: pks});
+                    // if (updatedObj) {
+                    //     return updatedObj.updateAttributes(object);
+                    // }
+                    // return null;
                 }
             } else {
                 if (object.deleted_at) {
@@ -70,53 +75,38 @@ export function extendSequelize(sequelize) {
                     return this.create(object);
                 }
             }
-        }))
-            .then((entities: any[]) => {
-                entities = entities.filter((e) => !!e);
-                return multiple ? entities : (entities.length > 0 ? entities[0] : null);
-            })
+        }) as Promise<any>[]);
+
+        entities = entities.filter((e) => !!e);
+        return multiple ? entities : (entities.length > 0 ? entities[0] : null);
+
     };
 
-    sequelize.Model.deepUpsert = function (objects) {
+    sequelize.Model.deepUpsert = async (objects) => {
         let multiple = Array.isArray(objects);
         objects = multiple ? objects : new Array(objects);
-        return Promise
-            .all(objects.map((object) => {
-                return this
-                    .bulkUpsert(this.filterAttributes(object))
-                    .then((entity) => {
-                        return Promise
-                            .all(this.filterAssociations(object).map((pair) => {
-                                return pair.association.target
-                                    .deepUpsert(pair.objects)
-                                    .then((otherEntities) => {
-                                        let otherEntitiesRefs = Array.isArray(otherEntities) ? otherEntities.map(e => e.get('id'))
-                                            : otherEntities.get('id');
 
-                                        return entity[pair.association.accessors.set](otherEntitiesRefs)
-                                            .then(() => {
-                                                entity.set(pair.association.as, otherEntities, {raw: true});
-                                                return entity;
-                                            })
-                                    })
-                            }))
-                            .then(() => {
-                                return entity;
-                            })
-                    })
+        let entities = await Promise.all(objects.map(async (object) => {
+            const entity = await this.bulkUpsert(this.filterAttributes(object));
 
-            }))
-            .then((entities: any[]) => {
-                entities = entities.filter((e) => !!e);
-                return multiple ? entities : (entities.length > 0 ? entities[0] : null);
-            })
+            await Promise.all(this.filterAssociations(object).map(async (pair) => {
+                const otherEntities = pair.association.target.deepUpsert(pair.objects);
+                let otherEntitiesRefs = Array.isArray(otherEntities)
+                    ? otherEntities.map(e => e.get('id'))
+                    : otherEntities.get('id');
+
+                await entity[pair.association.accessors.set](otherEntitiesRefs);
+                entity.set(pair.association.as, otherEntities, {raw: true});
+                return entity;
+            }));
+
+            return entity;
+        }) as Promise<any>[]);
+
+        entities = entities.filter((e) => !!e);
+        return multiple ? entities : (entities.length > 0 ? entities[0] : null);
 
     };
 
-
-    //
-    sequelize.Model.getInclude = function (fields) {
-
-    }
 
 }
