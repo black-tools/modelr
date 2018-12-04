@@ -1,13 +1,13 @@
 export function extendSequelize(sequelize) {
 
 
-    sequelize.Model.hasPrimaryKeyAttrs = function (obj) {
+    sequelize.Model.hasPrimaryKeyAttrs = (obj) => {
         let pks = this.primaryKeyAttributes;
         return pks.some((pk) => obj.hasOwnProperty(pk) && obj[pk]);
     };
 
 
-    sequelize.Model.filterPrimaryKeys = function (object) {
+    sequelize.Model.filterPrimaryKeys = (object) => {
         let primaryKeys = this.primaryKeyAttributes;
         let conditions = {};
         for (let key of primaryKeys) {
@@ -19,7 +19,7 @@ export function extendSequelize(sequelize) {
     };
 
 
-    sequelize.Model.filterAttributes = function (object) {
+    sequelize.Model.filterAttributes = (object) => {
         let attributes = this.rawAttributes as { [key: string]: any }[];
         let filteredObject = {};
         for (let [key, attr] of Object.entries(attributes)) {
@@ -85,7 +85,7 @@ export function extendSequelize(sequelize) {
     sequelize.Model.deepUpsert = async (objects) => {
         let multiple = Array.isArray(objects);
         objects = multiple ? objects : new Array(objects);
-
+        console.log(this);
         let entities = await Promise.all(objects.map(async (object) => {
             const entity = await this.bulkUpsert(this.filterAttributes(object));
 
