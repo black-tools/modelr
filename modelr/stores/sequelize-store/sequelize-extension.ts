@@ -102,7 +102,7 @@ export function extendSequelize(sequelize) {
 
             return entity;
         }) as Promise<any>[]);
-
+        console.log(entities)
         entities = entities.filter((e) => !!e);
         return multiple ? entities : (entities.length > 0 ? entities[0] : null);
 
