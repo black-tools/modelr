@@ -48,9 +48,6 @@ export function extendSequelize(sequelize) {
         return filteredObject;
     };
 
-    sequelize.Model.filterAttributes()
-
-
     sequelize.Model.filterAssociations = function (object) {
         let associations = this.associations;
         let filteredObject = [];
@@ -97,7 +94,6 @@ export function extendSequelize(sequelize) {
             }
         }) as Promise<any>[]);
 
-        console.log(entities);
         entities = entities.filter((e) => !!e);
         return multiple ? entities : (entities.length > 0 ? entities[0] : null);
 
@@ -126,7 +122,6 @@ export function extendSequelize(sequelize) {
 
             return entity;
         }) as Promise<any>[]);
-        // console.log(entities)
         entities = entities.filter((e) => !!e);
         return multiple ? entities : (entities.length > 0 ? entities[0] : null);
 
