@@ -111,6 +111,7 @@ export function extendSequelize(sequelize) {
 
             await Promise.all(this.filterAssociations(object).map(async (pair) => {
                 const otherEntities = await pair.association.target.deepUpsert(pair.objects);
+                console.log(otherEntities, typeof otherEntities);
                 let otherEntitiesRefs = Array.isArray(otherEntities)
                     ? otherEntities.map(e => e.get('id'))
                     : otherEntities.get('id');
