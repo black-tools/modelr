@@ -58,10 +58,12 @@ export function extendSequelize(sequelize) {
                     }
                     return null;
                 } else {
-                    return this.update(object, {
+                    const updt = await this.update(object, {
                         where: pks,
                         returning: true
                     });
+                    console.log(updt);
+                    return updt;
                     // const updatedObj = await this.findOne({where: pks});
                     // if (updatedObj) {
                     //     return updatedObj.updateAttributes(object);
@@ -102,7 +104,7 @@ export function extendSequelize(sequelize) {
 
             return entity;
         }) as Promise<any>[]);
-        console.log(entities)
+        // console.log(entities)
         entities = entities.filter((e) => !!e);
         return multiple ? entities : (entities.length > 0 ? entities[0] : null);
 
