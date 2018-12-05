@@ -1,3 +1,7 @@
+function isFunction(functionToCheck) {
+    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+}
+
 export function extendSequelize(sequelize) {
 
 
@@ -104,7 +108,7 @@ export function extendSequelize(sequelize) {
         objects = multiple ? objects : new Array(objects);
         let entities = await Promise.all(objects.map(async (object) => {
             if (this.hasOnlyPkAttrs(object)) {
-                return object;
+                return this.create(object);
             }
 
             const entity = await this.bulkUpsert(this.filterAttributes(object));
