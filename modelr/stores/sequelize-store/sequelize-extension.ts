@@ -77,6 +77,7 @@ export function extendSequelize(sequelize) {
             }
         }) as Promise<any>[]);
 
+        console.log(entities);
         entities = entities.filter((e) => !!e);
         return multiple ? entities : (entities.length > 0 ? entities[0] : null);
 
@@ -85,7 +86,6 @@ export function extendSequelize(sequelize) {
     sequelize.Model.deepUpsert = async function (objects) {
         let multiple = Array.isArray(objects);
         objects = multiple ? objects : new Array(objects);
-        // console.log(this);
         let entities = await Promise.all(objects.map(async (object) => {
             const entity = await this.bulkUpsert(this.filterAttributes(object));
 
