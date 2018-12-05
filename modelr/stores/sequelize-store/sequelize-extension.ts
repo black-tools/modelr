@@ -7,6 +7,24 @@ export function extendSequelize(sequelize) {
     };
 
 
+    sequelize.Model.hasOnlyPkAttrs = function (obj) {
+        let pks = this.primaryKeyAttributes;
+        return !Object.keys(obj).some(k => pks.indexOf(k) < 0);
+    };
+    //
+    // sequelize.Model.filterOnlyPksObjects = function (objects) {
+    //     const onlyPks = [];
+    //     const wValueObjects = [];
+    //     for (const object of objects) {
+    //         if (this.hasOnlyPrimaryKeys(object)) {
+    //             onlyPks.push(object)
+    //         } else {
+    //             wValueObjects.push(object);
+    //         }
+    //     }
+    //     return [onlyPks, wValueObjects];
+    // };
+
     sequelize.Model.filterPrimaryKeys = function (object) {
         let primaryKeys = this.primaryKeyAttributes;
         let conditions = {};
@@ -29,6 +47,9 @@ export function extendSequelize(sequelize) {
         }
         return filteredObject;
     };
+
+    sequelize.Model.filterAttributes()
+
 
     sequelize.Model.filterAssociations = function (object) {
         let associations = this.associations;
@@ -58,22 +79,14 @@ export function extendSequelize(sequelize) {
                     }
                     return null;
                 } else {
-                    const updt = await this.update(object, {
+                    const updatedObj = await this.update(object, {
                         where: pks,
                         returning: true
                     });
-                    if (updt[0] == 0) {
+                    if (updatedObj[0] == 0) {
                         return null;
                     }
-                    return updt[1][0];
-
-                    // console.log(updt);
-                    // return updt;
-                    // const updatedObj = await this.findOne({where: pks});
-                    // if (updatedObj) {
-                    //     return updatedObj.updateAttributes(object);
-                    // }
-                    // return null;
+                    return updatedObj[1][0];
                 }
             } else {
                 if (object.deleted_at) {
@@ -94,6 +107,10 @@ export function extendSequelize(sequelize) {
         let multiple = Array.isArray(objects);
         objects = multiple ? objects : new Array(objects);
         let entities = await Promise.all(objects.map(async (object) => {
+            if (this.hasOnlyPkAttrs(object.get({plain: true}))) {
+                return object;
+            }
+
             const entity = await this.bulkUpsert(this.filterAttributes(object));
 
             await Promise.all(this.filterAssociations(object).map(async (pair) => {
@@ -102,7 +119,7 @@ export function extendSequelize(sequelize) {
                     ? otherEntities.map(e => e.get('id'))
                     : otherEntities.get('id');
 
-                await entity[pair.association.accessors.set](otherEntitiesRefs);
+                await entity[pair.association.accessors.set](otherEntitiesRefs.filter(o => !this.hasOnlyPkAttrs(o)));
                 entity.set(pair.association.as, otherEntities, {raw: true});
                 return entity;
             }));
