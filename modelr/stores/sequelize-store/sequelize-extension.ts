@@ -62,8 +62,13 @@ export function extendSequelize(sequelize) {
                         where: pks,
                         returning: true
                     });
-                    console.log(updt);
-                    return updt;
+                    if (updt[0] == 0) {
+                        return null;
+                    }
+                    return updt[1][0];
+
+                    // console.log(updt);
+                    // return updt;
                     // const updatedObj = await this.findOne({where: pks});
                     // if (updatedObj) {
                     //     return updatedObj.updateAttributes(object);
