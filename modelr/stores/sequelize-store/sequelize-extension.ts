@@ -103,7 +103,7 @@ export function extendSequelize(sequelize) {
         let multiple = Array.isArray(objects);
         objects = multiple ? objects : new Array(objects);
         let entities = await Promise.all(objects.map(async (object) => {
-            if (this.hasOnlyPkAttrs(object.get({plain: true}))) {
+            if (this.hasOnlyPkAttrs(object)) {
                 return object;
             }
 
