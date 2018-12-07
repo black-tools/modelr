@@ -118,7 +118,7 @@ export function extendSequelize(sequelize) {
 
                 // console.log(otherEntities);
                 if(Array.isArray(otherEntities)) {
-                    const refs = otherEntities.map(e => e.get('id')).filter(o => !this.hasOnlyPkAttrs(o));
+                    const refs = otherEntities.filter(o => !this.hasOnlyPkAttrs(o)).map(e => e.get('id'));
                     await entity[pair.association.accessors.set](refs);
                 } else if (otherEntities){
                     const ref = otherEntities.get('id');
