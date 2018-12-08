@@ -6,7 +6,8 @@ export class Mapper<T> {
     constructor(private entityConstructor: { new(...args): T; }) {
 
     }
-    map(rawEntity: Partial<T>) {
+
+    map(rawEntity: Partial<T>): T {
 
         let schema = (<any>this.entityConstructor).schema;
         let applicableRawEntity: any = {};
@@ -28,7 +29,7 @@ export class Mapper<T> {
         return Object.assign(new this.entityConstructor(), applicableRawEntity);
     }
 
-    mapAll(rawEntities: Partial<T>[]) {
+    mapAll(rawEntities: Partial<T>[]): T[] {
         return rawEntities.map(r => this.map(r));
     }
 

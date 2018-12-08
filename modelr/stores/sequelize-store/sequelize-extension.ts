@@ -13,21 +13,10 @@ export function extendSequelize(sequelize) {
 
     sequelize.Model.hasOnlyPkAttrs = function (obj) {
         let pks = this.primaryKeyAttributes;
-        return !Object.keys(obj).some(k => pks.indexOf(k) < 0);
+        const keys = Object.keys(obj);
+        return !keys.some(k => pks.indexOf(k) < 0)
+            && pks.every(pk => keys.indexOf(pk) >= 0);
     };
-    //
-    // sequelize.Model.filterOnlyPksObjects = function (objects) {
-    //     const onlyPks = [];
-    //     const wValueObjects = [];
-    //     for (const object of objects) {
-    //         if (this.hasOnlyPrimaryKeys(object)) {
-    //             onlyPks.push(object)
-    //         } else {
-    //             wValueObjects.push(object);
-    //         }
-    //     }
-    //     return [onlyPks, wValueObjects];
-    // };
 
     sequelize.Model.filterPrimaryKeys = function (object) {
         let primaryKeys = this.primaryKeyAttributes;
@@ -41,14 +30,26 @@ export function extendSequelize(sequelize) {
     };
 
 
+    //TODO make this more efficient.
     sequelize.Model.filterAttributes = function (object) {
         let attributes = this.rawAttributes as { [key: string]: any }[];
+        let associations = this.associations as { [key: string]: any }[];
         let filteredObject = {};
         for (let [key, attr] of Object.entries(attributes)) {
             if (object.hasOwnProperty(attr.fieldName)) {
                 filteredObject[attr.fieldName] = object[attr.fieldName];
             }
         }
+
+        //TODO generalize this.
+        for (let [key, assoc] of Object.entries(associations)) {
+            if (assoc.constructor.name === 'BelongsTo') {
+                if (object[key].id) {
+                    filteredObject[assoc.foreignKey] = object[key].id;
+                }
+            }
+        }
+
         return filteredObject;
     };
 
@@ -106,9 +107,10 @@ export function extendSequelize(sequelize) {
     sequelize.Model.deepUpsert = async function (objects) {
         let multiple = Array.isArray(objects);
         objects = multiple ? objects : new Array(objects);
+
         let entities = await Promise.all(objects.map(async (object) => {
             if (this.hasOnlyPkAttrs(object)) {
-                return this.create(object);
+                return this.build(object);
             }
 
             const entity = await this.bulkUpsert(this.filterAttributes(object));
@@ -116,16 +118,15 @@ export function extendSequelize(sequelize) {
             await Promise.all(this.filterAssociations(object).map(async (pair) => {
                 const otherEntities = await pair.association.target.deepUpsert(pair.objects);
 
-                // console.log(otherEntities);
-                if(Array.isArray(otherEntities)) {
-                    const refs = otherEntities.filter(o => !this.hasOnlyPkAttrs(o)).map(e => e.get('id'));
-                    await entity[pair.association.accessors.set](refs);
-                } else if (otherEntities){
-                    const ref = otherEntities.get('id');
-                    await entity[pair.association.accessors.set](ref);
-                }
 
+                //TODO generalize this.
+                const refs = Array.isArray(otherEntities) ?
+                    otherEntities.map(e => e.get('id')) :
+                    otherEntities.get('id');
+
+                await entity[pair.association.accessors.set](refs);
                 entity.set(pair.association.as, otherEntities, {raw: true});
+
                 return entity;
             }));
 

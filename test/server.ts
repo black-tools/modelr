@@ -20,7 +20,8 @@ export class Bar extends IEntity<Bar>() {
 
 }
 
-export class BarCollection extends Collection<Bar>(Bar) {}
+export class BarCollection extends Collection<Bar>(Bar) {
+}
 
 
 @Entity({
@@ -32,12 +33,42 @@ export class Foo extends IEntity<Foo>() {
     @Attr() name: string;
     @Attr() temperature: 'cold' | 'warm' | 'hot';
     @Attr({through: 'users_bars'}) bars: BarCollection;
+    @Attr() bar: Bar;
 
     shoutName() {
         return this.name.toUpperCase() + ' !';
     }
 
 }
+
+
+@Controller({
+    path: '/bars'
+})
+export class BarController {
+
+    @Route({
+        path: '/',
+        method: 'get'
+    })
+    async query(params) {
+        return Bar.findAll({});
+    }
+
+    @Route({
+        path: '/',
+        method: 'put'
+    })
+    async save(params, data) {
+        try {
+            return await Bar.save(data);
+        } catch (err) {
+            console.log('err', err);
+            return err;
+        }
+    }
+}
+
 
 @Controller({
     path: '/foos'
@@ -71,9 +102,9 @@ export class FooController {
     })
     async save(params, data) {
         try {
-            const x = await Foo.saveAll(data); //todo should be save
-            console.log(x);
-            return x;
+            const foo = await Foo.create(data);
+            console.log(foo);
+            return foo.save();
         } catch (err) {
             console.log('err', err);
             return err;
@@ -86,9 +117,7 @@ export class FooController {
     })
     async update(params, data) {
         try {
-            const x = await Foo.saveAll(data); //todo should be save
-            console.log(x);
-            return x;
+            return await Foo.save(data);
         } catch (err) {
             console.log('err', err);
             return err;
@@ -108,7 +137,6 @@ export class FooController {
 }
 
 
-
 @NcModule({
     middlewares: [
         cors(),
@@ -116,7 +144,8 @@ export class FooController {
         json(),
     ],
     declarations: [
-        FooController
+        FooController,
+        BarController
     ]
 })
 export class AppModule {

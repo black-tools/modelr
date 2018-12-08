@@ -16,7 +16,7 @@ export function IEntity<T>() {
             return null;
         }
 
-        public static saveAll(entities: T | T[]): Promise<T[]> {
+        public static save(entities: T | T[]): Promise<T[]> {
             return null;
         }
 
@@ -57,8 +57,12 @@ export function Entity(options) {
             return await constructor.store.findAll(params, options);
         };
 
-        constructor.saveAll = async function (entities) {
-            return await constructor.store.saveAll(entities);
+        constructor.save = async function (entities) {
+            if (Array.isArray(entities)) {
+                return await constructor.store.saveAll(entities);
+            } else {
+                return await constructor.store.save(entities);
+            }
         };
 
         constructor.prototype.save = async function () {

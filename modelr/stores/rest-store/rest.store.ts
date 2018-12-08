@@ -34,21 +34,17 @@ export class RestStore<T> implements Store<T> {
     }
 
     async save(entities: T | T[]) {
-        if (entities instanceof Array) {
-            let res = await axios.put(this.url + '/', entities);
-            return this.mapper.mapAll(res.data);
+        let res;
+        if ((entities as any).id) {
+            res = await axios.put(this.url + '/' + (entities as any).id, entities);
         } else {
-            let res;
-            if ((entities as any).id) {
-                res = await axios.put(this.url + '/' + (entities as any).id, entities);
-            } else {
-                res = await axios.put(this.url, entities);
-            }
-            return this.mapper.map(res.data);
+            res = await axios.put(this.url, entities);
         }
+        return this.mapper.map(res.data);
     }
 
-    async saveAll(data) {
-        return this.save(data);
+    async saveAll(entities) {
+        let res = await axios.put(this.url + '/', entities);
+        return this.mapper.mapAll(res.data);
     }
 }

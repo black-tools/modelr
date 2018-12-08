@@ -14,6 +14,8 @@ export function Attr(options?: AttrOptions) {
         constructor.schema.associations = constructor.schema.associations || {};
 
         const returnType = Reflect.getMetadata("design:type", target, propertyKey);
+        console.log(returnType);
+
         if (returnType.__is_collection__) {
             const elReturnType = returnType.__class__;
             constructor.schema.associations[propertyKey] = {

@@ -23,7 +23,8 @@ export class Foo extends IEntity<Foo>() {
     @Attr() temperature: 'cold' | 'warm' | 'hot';
 
 
-    // @Attr() bar: Bar;
+    @Attr() bar: Bar;
+
     // @Attr() bars: BarCollection;
 
 
@@ -50,39 +51,41 @@ export async function test() {
     // let res1 = await Fns.fn1();
     // console.log(res1);
 
+    let bar1 = await Bar.create({}).save();  // quick object creation.
+    console.log('> 2', bar1);
     // creating a new object.
     // let foo1 = new Foo();
     // foo1.name = 'Cool Foo';
-    let foo1 = Foo.create({name: 'Cool Foo', temperature: 'cold'});  // quick object creation.
+    let foo1 = Foo.create({name: 'Cool Foo', temperature: 'cold', bar: bar1});  // quick object creation.
     foo1 = await foo1.save();
     console.log('Saved: ', foo1);
 
 
-    // // retrieving from db.
-    let foo2 = await Foo.find({id: 1}); // get or findOne ? find e findOne, em vez de get e query?
-    console.log('Retreived: ', foo2);
+    // // // retrieving from db.
+    // let foo2 = await Foo.find({id: 1}); // get or findOne ? find e findOne, em vez de get e query?
+    // console.log('Retreived: ', foo2);
+    // //
+    // foo2.name = 'A new name';
+    // foo2 = await foo2.save();
+    // console.log('---> ', foo2);
+    // console.log('Updated: ', foo1, ' to ', foo2);
+    // console.log('Shout: ', foo1.shoutName());
+    // //
+    // console.log('Searching cold foos, limit 5');
+    // let foos = await Foo.findAll({temperature: 'cold', _limit: 5});
+    // foos.forEach(f => {
+    //     console.log(f.id, f.shoutName());
+    // });
     //
-    foo2.name = 'A new name';
-    foo2 = await foo2.save();
-    console.log('---> ', foo2);
-    console.log('Updated: ', foo1, ' to ', foo2);
-    console.log('Shout: ', foo1.shoutName());
+    // // Here is where
+    // let savedFoos = await Foo.saveAll(foos);
+    // console.log(savedFoos);
     //
-    console.log('Searching cold foos, limit 5');
-    let foos = await Foo.findAll({temperature: 'cold', _limit: 5});
-    foos.forEach(f => {
-        console.log(f.id, f.shoutName());
-    });
-
-    // Here is where
-    let savedFoos = await Foo.saveAll(foos);
-    console.log(savedFoos);
-
-
-    let fooX = Foo.create({name: 'Cool Foo', temperature: 'cold'});  // quick object creation.
-    // fooX.
-
-    let barZ = Bar.create({});
-    let barY = Bar.create({});
+    //
+    // let fooX = Foo.create({name: 'Cool Foo', temperature: 'cold'});  // quick object creation.
+    // // fooX.
+    //
+    // let barZ = Bar.create({});
+    // let barY = Bar.create({});
 
 }

@@ -19,7 +19,6 @@ export class SequelizeStore<T> implements Store<T> {
         let name = (<any>entityConstructor).options.name;
 
 
-        // console.log((<any>entityConstructor).schema);
         const attributes = this.schema.attributes;
 
 
@@ -30,8 +29,6 @@ export class SequelizeStore<T> implements Store<T> {
         }
 
         this.sqlModel = sequelize.define(name, sqlSchema);
-
-        // let remoteUrl = (<any>entityConstructor).options.remoteUrl;
     }
 
 
@@ -65,7 +62,6 @@ export class SequelizeStore<T> implements Store<T> {
 
 
     async find(params, options?) {
-        // console.log('includes', options.fields, this.genIncludes((options && options.fields) || {}))
         const result = await this.sqlModel.findOne({
             where: params,
             include: this.genIncludes((options && options.fields) || {})
@@ -76,14 +72,6 @@ export class SequelizeStore<T> implements Store<T> {
         } else {
             return null;
         }
-        // let results = await axios.get(this.url, {
-        //     params: params
-        // });
-        // if (results.data.length > 0) {
-        //     return this.mapper.map(results.data[0]);
-        // } else {
-        //     return null;
-        // }
     }
 
     async findAll(params, options?) {
@@ -92,32 +80,16 @@ export class SequelizeStore<T> implements Store<T> {
             include: this.genIncludes((options && options.fields) || {})
         });
         return this.mapper.mapAll(results.map(r => r.get({plain: true})));
-
-        // let res = await axios.get(this.url, {
-        //     params: params
-        // });
-        // return res ? res.data.map(e => this.mapper.map(e)) : null;
     }
 
-    async save(entities: T | T[]) {
-        return this.sqlModel.deepUpsert(entities);
-
-        // if (entities instanceof Array) {
-        //     let res = await axios.put(this.url + '/', entities);
-        //     return this.mapper.mapAll(res.data);
-        // } else {
-        //     let res;
-        //     if ((entities as any).id) {
-        //         res = await axios.put(this.url + '/' + (entities as any).id, entities);
-        //     } else {
-        //         res = await axios.post(this.url, entities);
-        //     }
-        //     return this.mapper.map(res.data);
-        // }
+    async save(entity: T) {
+        const result = await this.sqlModel.deepUpsert(entity);
+        return result.get({plain: true});
     }
 
-    saveAll(entities): Promise<T[]> {
-        return this.sqlModel.deepUpsert(entities);
+    async saveAll(entities): Promise<T[]> {
+        const results = await this.sqlModel.deepUpsert(entities);
+        return this.mapper.mapAll(results.map(r => r.get({plain: true})));
     }
 
     associate() {
@@ -126,7 +98,7 @@ export class SequelizeStore<T> implements Store<T> {
             const type = associations[a].type;
             if (associations[a].multiple && associations[a].through) {
                 this.sqlModel.belongsToMany(type.store.sqlModel, {as: a, through: associations[a].through});
-            } else if(associations[a].multiple) {
+            } else if (associations[a].multiple) {
                 this.sqlModel.hasMany(type.store.sqlModel, {as: a});
             } else {
                 this.sqlModel.belongsTo(type.store.sqlModel, {as: a});
