@@ -44,7 +44,7 @@ export function extendSequelize(sequelize) {
         //TODO generalize this.
         for (let [key, assoc] of Object.entries(associations)) {
             if (assoc.constructor.name === 'BelongsTo') {
-                if (object[key].id) {
+                if (object[key] && object[key].id) {
                     filteredObject[assoc.foreignKey] = object[key].id;
                 }
             }
