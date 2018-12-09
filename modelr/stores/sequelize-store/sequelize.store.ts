@@ -77,7 +77,10 @@ export class SequelizeStore<T> implements Store<T> {
     async findAll(params, options?) {
         const results = await this.sqlModel.findAll({
             where: params,
-            include: this.genIncludes((options && options.fields) || {})
+            include: this.genIncludes((options && options.fields) || {}),
+            order: (options && options.order) || null,
+            limit: (options && options.limit) || null,
+            offset: (options && options.offset) || null
         });
         return this.mapper.mapAll(results.map(r => r.get({plain: true})));
     }
