@@ -15,8 +15,9 @@ export class Mapper<T> {
             const rawValue : any = rawEntity[key];
             if (schema.attributes.hasOwnProperty(key)) {
                 const type = schema.attributes[key].type;
+                console.log(type);
                 if(type === Date){
-                    applicableRawEntity[key] = rawValue instanceof String ? new Date(rawValue as string)  : rawValue ;
+                    applicableRawEntity[key] = typeof rawValue === 'string' ? new Date(rawValue as string)  : rawValue ;
                 }else {
                     applicableRawEntity[key] = rawValue;
                 }
