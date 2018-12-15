@@ -12,7 +12,7 @@ export function IEntity<T>() {
             return null;
         }
 
-        public static findAll(params: { [param: string]: any }, options?: { [param: string]: any }): Promise<T[]> {
+        public static findAll(params?: { [param: string]: any }, options?: { [param: string]: any }): Promise<T[]> {
             return null;
         }
 
