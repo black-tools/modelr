@@ -18,12 +18,12 @@ export class Mapper<T> {
         for (let key in rawEntity) {
             const rawValue: any = rawEntity[key];
             if (schema.attributes.hasOwnProperty(key)) {
-                const type = schema.attributes[key].type;
-                if (type === Date) {
-                    applicableRawEntity[key] = isString(typeof rawValue) ? new Date(rawValue as string) : rawValue;
-                } else {
+                // const type = schema.attributes[key].type;
+                // if (type === Date) {
+                //     applicableRawEntity[key] = isString(typeof rawValue) ? new Date(rawValue as string) : rawValue;
+                // } else {
+                // }
                     applicableRawEntity[key] = rawValue;
-                }
             } else if (schema.associations.hasOwnProperty(key)) {
                 const association = schema.associations[key];
                 const mapper = association.type.mapper;
