@@ -1,3 +1,7 @@
+function isString(str) {
+    return typeof str === 'string' || str instanceof String
+}
+
 /**
  * Here comes the magic.
  * We need to do mapping recursively to instantiate attributes/associations and stuff.
@@ -12,13 +16,12 @@ export class Mapper<T> {
         let schema = (<any>this.entityConstructor).schema;
         let applicableRawEntity: any = {};
         for (let key in rawEntity) {
-            const rawValue : any = rawEntity[key];
+            const rawValue: any = rawEntity[key];
             if (schema.attributes.hasOwnProperty(key)) {
                 const type = schema.attributes[key].type;
-                console.log(type);
-                if(type === Date){
-                    applicableRawEntity[key] = typeof rawValue === 'string' ? new Date(rawValue as string)  : rawValue ;
-                }else {
+                if (type === Date) {
+                    applicableRawEntity[key] = isString(typeof rawValue) ? new Date(rawValue as string) : rawValue;
+                } else {
                     applicableRawEntity[key] = rawValue;
                 }
             } else if (schema.associations.hasOwnProperty(key)) {
