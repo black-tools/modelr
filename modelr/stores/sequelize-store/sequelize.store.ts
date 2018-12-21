@@ -3,7 +3,7 @@
 import * as Sequelize from 'sequelize';
 import {Mapper} from "../../mapper";
 import {Store} from "../../interfaces/store";
-import {validateWhere} from "./sequelize-conditionals";
+import {mapOperators} from "./sequelize-conditionals";
 
 export class SequelizeStore<T> implements Store<T> {
 
@@ -63,7 +63,7 @@ export class SequelizeStore<T> implements Store<T> {
 
     async find(params, options?) {
         const result = await this.sqlModel.findOne({
-            where: validateWhere(params),
+            where: mapOperators(params),
             include: this.genIncludes((options && options.fields) || {})
         });
 
@@ -76,7 +76,7 @@ export class SequelizeStore<T> implements Store<T> {
 
     async findAll(params, options?) {
         const results = await this.sqlModel.findAll({
-            where: validateWhere(params),
+            where: mapOperators(params),
             include: this.genIncludes((options && options.fields) || {}),
             order: (options && options.order) || null,
             limit: (options && options.limit) || null,

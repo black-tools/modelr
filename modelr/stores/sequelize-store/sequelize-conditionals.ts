@@ -40,7 +40,7 @@ const operatorsAliases = {
 };
 
 
-function mapOperators(object) {
+export function mapOperators(object) {
     if (Array.isArray(object)) {
         return object.map((e) => mapOperators(e));
     } else if (object === null) {
