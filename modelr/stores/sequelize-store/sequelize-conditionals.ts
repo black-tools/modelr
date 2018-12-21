@@ -45,9 +45,10 @@ export function mapOperators(object) {
         return object.map((e) => mapOperators(e));
     } else if (object === null) {
         return null;
-    } else if (typeof object === 'object' && typeof object === 'object') {
+    } else if (typeof object === 'object') {
         let mappedObject = {};
-        for (let key in object) {
+        const keys = [...Object.keys(object), ...Object.getOwnPropertySymbols(object)];
+        for (const key of keys) {
             let mappedKey = operatorsAliases[key] || key;
             mappedObject[mappedKey] = mapOperators(object[key]);
         }
