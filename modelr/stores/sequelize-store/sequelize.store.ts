@@ -32,6 +32,15 @@ export class SequelizeStore<T> implements Store<T> {
     }
 
 
+    private expandForeignKeys(obj) {
+        for (const key in obj) {
+            if (key.endsWith('_id') && key.length > 3) {
+                obj[key.slice(0, -3)] = {id: obj[key]};
+            }
+        }
+        return obj;
+    }
+
     private schemaConversion(attribute: any) {
         let sqlType;
         if (attribute.type === String) {
@@ -68,7 +77,7 @@ export class SequelizeStore<T> implements Store<T> {
         });
 
         if (result) {
-            return this.mapper.map(result.get({plain: true}));
+            return this.mapper.map(this.expandForeignKeys(result.get({plain: true})));
         } else {
             return null;
         }
@@ -82,17 +91,17 @@ export class SequelizeStore<T> implements Store<T> {
             limit: (options && options.limit) || null,
             offset: (options && options.offset) || null
         });
-        return this.mapper.mapAll(results.map(r => r.get({plain: true})));
+        return this.mapper.mapAll(results.map(r => r.get({plain: true}).map(r => this.expandForeignKeys(r))));
     }
 
     async save(entity: T) {
         const result = await this.sqlModel.deepUpsert(entity);
-        return result.get({plain: true});
+        return this.expandForeignKeys(result.get({plain: true}));
     }
 
     async saveAll(entities): Promise<T[]> {
         const results = await this.sqlModel.deepUpsert(entities);
-        return this.mapper.mapAll(results.map(r => r.get({plain: true})));
+        return this.mapper.mapAll(results.map(r => r.get({plain: true}).map(r => this.expandForeignKeys(r)));
     }
 
     associate() {
