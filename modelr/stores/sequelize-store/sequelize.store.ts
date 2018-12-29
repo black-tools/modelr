@@ -101,7 +101,7 @@ export class SequelizeStore<T> implements Store<T> {
 
     async saveAll(entities): Promise<T[]> {
         const results = await this.sqlModel.deepUpsert(entities);
-        return this.mapper.mapAll(results.map(r => r.get({plain: true}).map(r => this.expandForeignKeys(r)));
+        return this.mapper.mapAll(results.map(r => r.get({plain: true}).map(r => this.expandForeignKeys(r))));
     }
 
     associate() {
