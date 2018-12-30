@@ -41,6 +41,8 @@ export class SequelizeStore<T> implements Store<T> {
         } else if (attribute.type === Number) {
             const numericType = attribute.typeDomain || 'double';
             sqlType = Sequelize[numericType.toLocaleUpperCase()];
+        } else if (attribute.type === Boolean) {
+            sqlType = Sequelize.BOOLEAN;
         }
 
         return {
