@@ -96,7 +96,7 @@ export class SequelizeStore<T> implements Store<T> {
 
     async remove(params) {
         const result = await this.sqlModel.destroy({
-            where: mapOperators(params),
+            where: {id: params.id},
         });
         return null;
         // if (result) {
