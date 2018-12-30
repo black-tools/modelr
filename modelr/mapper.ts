@@ -33,7 +33,7 @@ export class Mapper<T> {
                 } else {
                     applicableRawEntity[key] = mapper.map(rawValue);
                 }
-            } else if (key.endsWith('_id') && (newKey = key.slice(0,-3)).length > 0 && schema.associations.hasOwnProperty(newKey)){
+            } else if (rawValue != null && key.endsWith('_id') && (newKey = key.slice(0,-3)).length > 0 && schema.associations.hasOwnProperty(newKey)){
                 const association = schema.associations[newKey];
                 const type = association.type;
                 applicableRawEntity[newKey] = type.create({id: rawValue})
