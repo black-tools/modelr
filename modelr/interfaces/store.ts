@@ -6,4 +6,6 @@ export interface Store<T> {
     saveAll(params?): Promise<T[]>;
 
     save(entity: T): Promise<T>;
+
+    remove(params?): Promise<T>;
 }

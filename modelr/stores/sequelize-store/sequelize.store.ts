@@ -94,6 +94,18 @@ export class SequelizeStore<T> implements Store<T> {
         return this.mapper.mapAll(results.map(r => r.get({plain: true})));
     }
 
+    async remove(params) {
+        const result = await this.sqlModel.destroy({
+            where: mapOperators(params),
+        });
+        return null;
+        // if (result) {
+        //     return this.mapper.map(result.get({plain: true}));
+        // } else {
+        //     return null;
+        // }
+    }
+
     associate() {
         const associations = this.schema.associations;
         for (let a in associations) {

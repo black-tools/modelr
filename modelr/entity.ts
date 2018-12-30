@@ -65,8 +65,14 @@ export function Entity(options) {
             }
         };
 
+
+
         constructor.prototype.save = async function () {
             return await constructor.store.save(this);
+        };
+
+        constructor.prototype.remove = async function () {
+            return await constructor.store.remove(this);
         };
 
         constructor.prototype.clone = function () {

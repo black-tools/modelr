@@ -47,4 +47,16 @@ export class RestStore<T> implements Store<T> {
         let res = await axios.put(this.url + '/', entities);
         return this.mapper.mapAll(res.data);
     }
+
+    async remove(params) {
+        const {id = '', ...query} = {...params};
+        let results = await axios.delete(this.url + ('/' + id), {
+            params: query
+        });
+        if (results.data) {
+            return this.mapper.map(results.data);
+        } else {
+            return null;
+        }
+    }
 }
