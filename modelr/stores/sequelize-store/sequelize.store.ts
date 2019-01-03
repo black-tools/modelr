@@ -63,20 +63,21 @@ export class SequelizeStore<T> implements Store<T> {
 
 
     async find(params, options?) {
-        const raw = options.raw;
+        const raw = options && options.raw;
         const result = await this.sqlModel.findOne({
             where: mapOperators(params),
             include: this.genIncludes((options && options.fields) || {})
         });
 
         if (result) {
-            return options.raw ? result : this.mapper.map(result.get({plain: true}));
+            return raw ? result : this.mapper.map(result.get({plain: true}));
         } else {
             return null;
         }
     }
 
     async findAll(params, options?) {
+        const raw = options && options.raw;
         const results = await this.sqlModel.findAll({
             where: mapOperators(params),
             include: this.genIncludes((options && options.fields) || {}),
@@ -84,7 +85,7 @@ export class SequelizeStore<T> implements Store<T> {
             limit: (options && options.limit) || null,
             offset: (options && options.offset) || null
         });
-        return options.raw ? results : this.mapper.mapAll(results.map(r => r.get({plain: true})));
+        return raw ? results : this.mapper.mapAll(results.map(r => r.get({plain: true})));
     }
 
     async save(entity: T) {
