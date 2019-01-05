@@ -22,7 +22,7 @@ export class SocketPool implements Pool {
         });
     }
 
-    public send(method, path, params, data) {
+    public send(method, path, params, data?) {
         return new Promise((resolve, reject) => {
             this.pendingRequests[++this.requestId] = [resolve, reject];
             this.socket.emit(method + ' ' + path, [this.requestId, params, data]);
@@ -30,7 +30,7 @@ export class SocketPool implements Pool {
     }
 
     getStore<T>(entityConstructor: { new(...args): T }): Store<T> {
-        return new SocketStore<T>(entityConstructor, this.socket);
+        return new SocketStore<T>(entityConstructor, this);
     }
 
 }
