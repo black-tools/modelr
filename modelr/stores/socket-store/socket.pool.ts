@@ -22,7 +22,7 @@ export class SocketPool implements Pool {
         });
     }
 
-    public send(method, path, params, data?) {
+    public send(method, path, params, data?) : Promise<any | any[]>{
         return new Promise((resolve, reject) => {
             this.pendingRequests[++this.requestId] = [resolve, reject];
             this.socket.emit(method + ' ' + path, [this.requestId, params, data]);
