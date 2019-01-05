@@ -25,7 +25,11 @@ export class SocketPool implements Pool {
     public send(method, path, params, data?) : Promise<any | any[]>{
         return new Promise((resolve, reject) => {
             this.pendingRequests[++this.requestId] = [resolve, reject];
-            this.socket.emit(method + ' ' + path, [this.requestId, params, data]);
+
+            const event = method + ' ' + path;
+            console.dir(event, this.requestId, params, data);
+
+            this.socket.emit(event, [this.requestId, params, data]);
         })
     }
 
