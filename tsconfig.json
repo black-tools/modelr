@@ -11,6 +11,7 @@
   "files": [
     "modelr/index.ts",
     "modelr/stores/rest-store/index.ts",
-    "modelr/stores/sequelize-store/index.ts"
+    "modelr/stores/sequelize-store/index.ts",
+    "modelr/stores/socket-store/index.ts"
   ]
 }
