@@ -4,7 +4,7 @@ import {SocketStore} from "./socket.store";
 export class SocketPool implements Pool {
 
     private requestId: number = 0;
-    private pendingRequests: {};
+    private pendingRequests = {};
 
     constructor(private socket) {
         socket.on('R', (data) => {
