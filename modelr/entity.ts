@@ -20,6 +20,8 @@ export function IEntity<T>() {
             return null;
         }
 
+        public static remove: (params) => Promise<T>;
+
         public clone: () => T;
         public save: () => Promise<T>;
         public remove: () => Promise<T>;
@@ -65,7 +67,9 @@ export function Entity(options) {
             }
         };
 
-
+        constructor.remove = async function (params) {
+            return await constructor.store.remove(params);
+        };
 
         constructor.prototype.save = async function () {
             return await constructor.store.save(this);
