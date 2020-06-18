@@ -37,7 +37,7 @@
     "json-server": "^0.13.0",
     "nodemon": "^1.18.2",
     "pg": "^7.4.3",
-    "sequelize": "^4.38.0",
+    "sequelize": "^5.15.1",
     "ts-loader": "^4.3.0",
     "ts-node": "^6.2.0",
     "typescript": "^2.8.3",
